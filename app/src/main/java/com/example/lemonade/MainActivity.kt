@@ -48,6 +48,8 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+enum class Lemonade { TREE, LEMON, JUICE, REPEAT; }
+
 @Preview
 @Composable
 fun App(modifier: Modifier = Modifier) {
@@ -70,25 +72,25 @@ fun App(modifier: Modifier = Modifier) {
                 fontWeight = FontWeight.SemiBold
             )
         }
-        var state by remember { mutableStateOf(1) }
+        var state by remember { mutableStateOf(Lemonade.TREE) }
         var randomCount = (0..10).random()
         var clickCounter = 0
         var image = when (state) {
-            1 -> painterResource(R.drawable.lemon_tree)
-            2 -> painterResource(R.drawable.lemon_squeeze)
-            3 -> painterResource(R.drawable.lemon_drink)
+            Lemonade.TREE -> painterResource(R.drawable.lemon_tree)
+            Lemonade.LEMON -> painterResource(R.drawable.lemon_squeeze)
+            Lemonade.JUICE -> painterResource(R.drawable.lemon_drink)
             else -> painterResource(R.drawable.lemon_restart)
         }
         var imageDesc = when (state) {
-            1 -> "Lemon tree"
-            2 -> "Lemon"
-            3 -> "Glass of lemonade"
+            Lemonade.TREE -> "Lemon tree"
+            Lemonade.LEMON -> "Lemon"
+            Lemonade.JUICE -> "Glass of lemonade"
             else -> "Empty glass"
         }
         var desc = when (state) {
-            1 -> stringResource(R.string.lemon_tree_desc)
-            2 -> stringResource(R.string.lemon_desc)
-            3 -> stringResource(R.string.glass_of_lemonade_desc)
+            Lemonade.TREE -> stringResource(R.string.lemon_tree_desc)
+            Lemonade.LEMON -> stringResource(R.string.lemon_desc)
+            Lemonade.JUICE -> stringResource(R.string.glass_of_lemonade_desc)
             else -> stringResource(R.string.empty_glass_of_lemonade)
         }
         Column(
@@ -97,22 +99,24 @@ fun App(modifier: Modifier = Modifier) {
         ) {
             LemonadeButton(image, imageDesc) {
                 when (state) {
-                    1, 3 -> {
-                        ++state
+                    Lemonade.TREE -> {
+                        state = Lemonade.LEMON
                     }
-
-                    2 -> {
+                    Lemonade.LEMON -> {
                         if (clickCounter == randomCount) {
-                            ++state
+                            state = Lemonade.JUICE
                             randomCount = (0..10).random()
                             clickCounter = 0
                         } else {
                             clickCounter++
                         }
                     }
+                    Lemonade.JUICE -> {
+                        state = Lemonade.REPEAT
+                    }
 
                     else -> {
-                        state = 1
+                        state = Lemonade.TREE
                     }
                 }
             }
