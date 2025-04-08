@@ -30,13 +30,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.lemonade.ui.theme.LemonadeTheme
-import kotlin.inc
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,6 +71,8 @@ fun App(modifier: Modifier = Modifier) {
             )
         }
         var state by remember { mutableStateOf(1) }
+        var randomCount = (0..10).random()
+        var clickCounter = 0
         var image = when (state) {
             1 -> painterResource(R.drawable.lemon_tree)
             2 -> painterResource(R.drawable.lemon_squeeze)
@@ -95,7 +95,27 @@ fun App(modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            LemonadeButton(image, imageDesc) { state = if (state in 1..3) ++state else 1 }
+            LemonadeButton(image, imageDesc) {
+                when (state) {
+                    1, 3 -> {
+                        ++state
+                    }
+
+                    2 -> {
+                        if (clickCounter == randomCount) {
+                            ++state
+                            randomCount = (0..10).random()
+                            clickCounter = 0
+                        } else {
+                            clickCounter++
+                        }
+                    }
+
+                    else -> {
+                        state = 1
+                    }
+                }
+            }
             Spacer(Modifier.height(16.dp))
             Text(
                 text = desc,
